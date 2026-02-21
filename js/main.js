@@ -157,7 +157,12 @@ hamburger.addEventListener('click', () => {
 
 // Close mobile nav when clicking on a link
 navLinkItems.forEach(link => {
-    link.addEventListener('click', () => {
+    link.addEventListener('click', (e) => {
+        // Remove active from all links
+        navLinkItems.forEach(l => l.classList.remove('active'));
+        // Add active to clicked link
+        link.classList.add('active');
+        
         hamburger.classList.remove('active');
         navLinks.classList.remove('active');
     });

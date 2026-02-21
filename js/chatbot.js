@@ -13,7 +13,7 @@ const chatbotBadge = document.querySelector('.chatbot-badge');
 
 // Gemini API Configuration
 const GEMINI_API_KEY = 'AIzaSyBNRAoDCCUc5xjHMO77AAMDRC2cyk1dDGg';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent';
 
 // Portfolio context untuk Gemini
 const portfolioContext = `
@@ -120,7 +120,13 @@ async function sendMessage() {
     } catch (error) {
         removeTyping();
         console.error('Gemini API Error:', error);
-        addMessage('Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi Alif langsung melalui form Contact. 😊', 'bot');
+        
+        // Check error type
+        if (error.message.includes('429')) {
+            addMessage('Maaf, chatbot sedang sibuk. Silakan tunggu beberapa detik dan coba lagi. 🙏', 'bot');
+        } else {
+            addMessage('Maaf, terjadi kesalahan koneksi. Silakan refresh halaman dan coba lagi. 😊', 'bot');
+        }
     }
     
     // Re-enable input
@@ -202,46 +208,19 @@ function removeTyping() {
 
 // Get response from Gemini API
 async function getGeminiResponse(userMessage) {
+    // Gabungkan context dengan user message
+    const fullPrompt = `${portfolioContext}\n\nPertanyaan user: ${userMessage}`;
+    
     const requestBody = {
         contents: [
             {
-                role: 'user',
-                parts: [{ text: portfolioContext }]
-            },
-            {
-                role: 'model',
-                parts: [{ text: 'Baik, saya mengerti. Saya adalah asisten virtual untuk portfolio Alif Siky Ridhofa. Saya siap membantu menjawab pertanyaan tentang profil, skills, project, dan layanan Alif. 😊' }]
-            },
-            ...chatHistory,
-            {
-                role: 'user',
-                parts: [{ text: userMessage }]
+                parts: [{ text: fullPrompt }]
             }
         ],
         generationConfig: {
             temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
             maxOutputTokens: 500,
-        },
-        safetySettings: [
-            {
-                category: 'HARM_CATEGORY_HARASSMENT',
-                threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-            },
-            {
-                category: 'HARM_CATEGORY_HATE_SPEECH',
-                threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-            },
-            {
-                category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-                threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-            },
-            {
-                category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-                threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-            }
-        ]
+        }
     };
     
     const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -253,6 +232,8 @@ async function getGeminiResponse(userMessage) {
     });
     
     if (!response.ok) {
+        const errorData = await response.json();
+        console.error('API Error Details:', errorData);
         throw new Error(`API Error: ${response.status}`);
     }
     
@@ -261,6 +242,7 @@ async function getGeminiResponse(userMessage) {
     if (data.candidates && data.candidates[0] && data.candidates[0].content) {
         return data.candidates[0].content.parts[0].text;
     } else {
+        console.error('Response data:', data);
         throw new Error('Invalid response format');
     }
 }

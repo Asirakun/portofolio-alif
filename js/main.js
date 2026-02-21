@@ -102,9 +102,9 @@ function onScroll() {
             
             // Update active nav link
             const sections = document.querySelectorAll('section[id]');
-            const scrollPosition = scrollY + 150;
+            const scrollPosition = scrollY + (window.innerHeight / 3);
             
-            let currentSection = '';
+            let currentSection = 'home'; // Default to home
             
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
@@ -119,10 +119,12 @@ function onScroll() {
             // Remove active from all, then add to current
             navLinkItems.forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('href') === `#${currentSection}`) {
-                    link.classList.add('active');
-                }
             });
+            
+            const activeLink = document.querySelector(`.nav-link[href="#${currentSection}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
             
             // Scroll progress bar
             if (scrollProgress) {

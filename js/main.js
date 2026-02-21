@@ -44,6 +44,7 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 const projectCards = document.querySelectorAll('.project-card');
 const skillBars = document.querySelectorAll('.level-bar');
 const contactForm = document.getElementById('contact-form');
+const scrollProgress = document.getElementById('scroll-progress');
 
 // ==========================================
 // Typed Text Animation
@@ -88,6 +89,30 @@ typeText();
 // ==========================================
 let ticking = false;
 
+function updateActiveNavLink() {
+    const sections = document.querySelectorAll('section[id]');
+    const scrollY = window.scrollY;
+    
+    let currentSection = 'home';
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop - 200;
+        const sectionBottom = sectionTop + section.offsetHeight;
+        
+        if (scrollY >= sectionTop && scrollY < sectionBottom) {
+            currentSection = section.getAttribute('id');
+        }
+    });
+    
+    // Update nav links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+        }
+    });
+}
+
 function onScroll() {
     if (!ticking) {
         requestAnimationFrame(() => {
@@ -101,30 +126,7 @@ function onScroll() {
             }
             
             // Update active nav link
-            const sections = document.querySelectorAll('section[id]');
-            const scrollPosition = scrollY + (window.innerHeight / 3);
-            
-            let currentSection = 'home'; // Default to home
-            
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
-                const sectionId = section.getAttribute('id');
-                
-                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    currentSection = sectionId;
-                }
-            });
-            
-            // Remove active from all, then add to current
-            navLinkItems.forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            const activeLink = document.querySelector(`.nav-link[href="#${currentSection}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active');
-            }
+            updateActiveNavLink();
             
             // Scroll progress bar
             if (scrollProgress) {
@@ -134,10 +136,12 @@ function onScroll() {
             }
             
             // Back to top button
-            if (scrollY > 500) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
+            if (backToTop) {
+                if (scrollY > 500) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
             }
             
             ticking = false;

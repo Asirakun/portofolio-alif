@@ -758,6 +758,49 @@
         <i class="fas fa-arrow-up"></i>
     </a>
 
+    <!-- Chatbot -->
+    <div class="chatbot-container" id="chatbot">
+        <button class="chatbot-toggle" id="chatbot-toggle">
+            <i class="fas fa-comments"></i>
+            <span class="chatbot-badge">1</span>
+        </button>
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-header-info">
+                    <div class="chatbot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h4>Portfolio Assistant</h4>
+                        <span class="chatbot-status">Online</span>
+                    </div>
+                </div>
+                <button class="chatbot-close" id="chatbot-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot">
+                    <div class="message-content">
+                        <p>Halo! 👋 Saya asisten virtual Alif. Ada yang bisa saya bantu?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-suggestions" id="chatbot-suggestions">
+                <button class="suggestion-btn" data-question="Siapa Alif?">Siapa Alif?</button>
+                <button class="suggestion-btn" data-question="Apa saja skill yang dimiliki?">Skills</button>
+                <button class="suggestion-btn" data-question="Tampilkan project">Projects</button>
+                <button class="suggestion-btn" data-question="Bagaimana cara menghubungi?">Contact</button>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input" placeholder="Ketik pertanyaan..." autocomplete="off">
+                <button id="chatbot-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -766,5 +809,6 @@
     <!-- Scripts -->
     <script src="js/main.js"></script>
     <script src="js/firebase.js"></script>
+    <script src="js/chatbot.js"></script>
 </body>
 </html>

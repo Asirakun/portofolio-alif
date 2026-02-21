@@ -263,10 +263,10 @@ LAYANAN YANG DITAWARKAN:
 - Maintenance & Support
 
 KONTAK:
-- Email: alif@example.com
+- Email: alifsikyridhofa11@gmail.com
 - GitHub: github.com/Asirakun
 - LinkedIn: linkedin.com/in/alif
-- Instagram: @alif.siky
+- Instagram: @alff_skyy
 - Website: alifporto.netlify.app
 
 INSTRUKSI TAMBAHAN:

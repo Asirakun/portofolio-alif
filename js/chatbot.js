@@ -2,6 +2,7 @@
 // AI Chatbot with Google Gemini
 // ==========================================
 
+const chatbotContainer = document.getElementById('chatbot');
 const chatbotToggle = document.getElementById('chatbot-toggle');
 const chatbotWindow = document.getElementById('chatbot-window');
 const chatbotClose = document.getElementById('chatbot-close');
@@ -11,9 +12,203 @@ const chatbotSend = document.getElementById('chatbot-send');
 const chatbotSuggestions = document.getElementById('chatbot-suggestions');
 const chatbotBadge = document.querySelector('.chatbot-badge');
 
+// ==========================================
+// Smooth Flying + Draggable + Blinking
+// ==========================================
+let isFlying = true;
+let isDragging = false;
+let isResting = false; // Robot is resting at a spot
+let posX = 50;
+let posY = window.innerHeight - 150;
+let targetX = 200;
+let targetY = 300;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+
+// Set initial position
+chatbotContainer.style.left = posX + 'px';
+chatbotContainer.style.top = posY + 'px';
+chatbotContainer.style.bottom = 'auto';
+chatbotContainer.style.right = 'auto';
+
+function updateTarget() {
+    // Random new target within screen bounds
+    const padding = 100;
+    targetX = padding + Math.random() * (window.innerWidth - padding * 2 - 65);
+    targetY = padding + Math.random() * (window.innerHeight - padding * 2 - 65);
+}
+
+function moveToTarget() {
+    if (!isFlying || isDragging || isResting) return;
+    
+    const dx = targetX - posX;
+    const dy = targetY - posY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    // If arrived at target, rest for a while
+    if (distance < 5) {
+        isResting = true;
+        chatbotToggle.classList.add('resting');
+        
+        // Rest for 4-8 seconds before moving again
+        const restTime = 4000 + Math.random() * 4000;
+        setTimeout(() => {
+            if (isFlying && !isDragging) {
+                isResting = false;
+                chatbotToggle.classList.remove('resting');
+                updateTarget();
+                moveToTarget();
+            }
+        }, restTime);
+        return;
+    }
+    
+    // Very slow, smooth movement
+    const speed = 0.5;
+    const moveX = (dx / distance) * speed;
+    const moveY = (dy / distance) * speed;
+    
+    posX += moveX;
+    posY += moveY;
+    
+    // Keep within screen bounds
+    const minX = 20;
+    const maxX = window.innerWidth - 85;
+    const minY = 80;
+    const maxY = window.innerHeight - 85;
+    
+    posX = Math.max(minX, Math.min(maxX, posX));
+    posY = Math.max(minY, Math.min(maxY, posY));
+    
+    // Apply position
+    chatbotContainer.style.left = posX + 'px';
+    chatbotContainer.style.top = posY + 'px';
+    
+    requestAnimationFrame(moveToTarget);
+}
+
+// ==========================================
+// Draggable functionality
+// ==========================================
+chatbotToggle.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    isResting = false;
+    dragOffsetX = e.clientX - posX;
+    dragOffsetY = e.clientY - posY;
+    chatbotToggle.style.cursor = 'grabbing';
+    chatbotToggle.classList.remove('resting');
+    chatbotToggle.classList.add('dragging'); // Surprised face!
+    e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    
+    posX = e.clientX - dragOffsetX;
+    posY = e.clientY - dragOffsetY;
+    
+    // Keep within bounds while dragging
+    const minX = 20;
+    const maxX = window.innerWidth - 85;
+    const minY = 80;
+    const maxY = window.innerHeight - 85;
+    
+    posX = Math.max(minX, Math.min(maxX, posX));
+    posY = Math.max(minY, Math.min(maxY, posY));
+    
+    chatbotContainer.style.left = posX + 'px';
+    chatbotContainer.style.top = posY + 'px';
+});
+
+document.addEventListener('mouseup', () => {
+    if (isDragging) {
+        isDragging = false;
+        chatbotToggle.style.cursor = 'grab';
+        chatbotToggle.classList.remove('dragging'); // Back to normal
+        
+        // After drag, rest then move
+        isResting = true;
+        chatbotToggle.classList.add('resting');
+        
+        setTimeout(() => {
+            if (isFlying) {
+                isResting = false;
+                chatbotToggle.classList.remove('resting');
+                updateTarget();
+                moveToTarget();
+            }
+        }, 3000);
+    }
+});
+
+// Touch support for mobile
+chatbotToggle.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    isResting = false;
+    const touch = e.touches[0];
+    dragOffsetX = touch.clientX - posX;
+    dragOffsetY = touch.clientY - posY;
+    chatbotToggle.classList.remove('resting');
+    chatbotToggle.classList.add('dragging'); // Surprised face!
+    e.preventDefault();
+}, { passive: false });
+
+document.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    
+    const touch = e.touches[0];
+    posX = touch.clientX - dragOffsetX;
+    posY = touch.clientY - dragOffsetY;
+    
+    const minX = 20;
+    const maxX = window.innerWidth - 85;
+    const minY = 80;
+    const maxY = window.innerHeight - 85;
+    
+    posX = Math.max(minX, Math.min(maxX, posX));
+    posY = Math.max(minY, Math.min(maxY, posY));
+    
+    chatbotContainer.style.left = posX + 'px';
+    chatbotContainer.style.top = posY + 'px';
+}, { passive: false });
+
+document.addEventListener('touchend', () => {
+    if (isDragging) {
+        isDragging = false;
+        chatbotToggle.classList.remove('dragging'); // Back to normal
+        isResting = true;
+        chatbotToggle.classList.add('resting');
+        
+        setTimeout(() => {
+            if (isFlying) {
+                isResting = false;
+                chatbotToggle.classList.remove('resting');
+                updateTarget();
+                moveToTarget();
+            }
+        }, 3000);
+    }
+});
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    const maxX = window.innerWidth - 85;
+    const maxY = window.innerHeight - 85;
+    if (posX > maxX) posX = maxX;
+    if (posY > maxY) posY = maxY;
+    chatbotContainer.style.left = posX + 'px';
+    chatbotContainer.style.top = posY + 'px';
+});
+
+// Start movement after initial rest
+setTimeout(() => {
+    updateTarget();
+    moveToTarget();
+}, 2000);
+
 // Gemini API Configuration
-const GEMINI_API_KEY = 'AIzaSyBNRAoDCCUc5xjHMO77AAMDRC2cyk1dDGg';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent';
+const GEMINI_API_KEY = 'AIzaSyAPPR1EZLbvMKxcGnT0Va52HwOqXPaXbHE';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 // Portfolio context untuk Gemini
 const portfolioContext = `
@@ -87,6 +282,15 @@ let chatHistory = [];
 // Toggle chatbot window
 chatbotToggle.addEventListener('click', () => {
     chatbotWindow.classList.toggle('active');
+    
+    // Stop flying when chat is open
+    if (chatbotWindow.classList.contains('active')) {
+        isFlying = false;
+    } else {
+        isFlying = true;
+        flyAnimation();
+    }
+    
     if (chatbotBadge) {
         chatbotBadge.style.display = 'none';
     }
@@ -94,6 +298,9 @@ chatbotToggle.addEventListener('click', () => {
 
 chatbotClose.addEventListener('click', () => {
     chatbotWindow.classList.remove('active');
+    // Resume flying when chat is closed
+    isFlying = true;
+    flyAnimation();
 });
 
 // Send message
@@ -120,12 +327,17 @@ async function sendMessage() {
     } catch (error) {
         removeTyping();
         console.error('Gemini API Error:', error);
+        console.error('Error message:', error.message);
         
         // Check error type
         if (error.message.includes('429')) {
             addMessage('Maaf, chatbot sedang sibuk. Silakan tunggu beberapa detik dan coba lagi. 🙏', 'bot');
+        } else if (error.message.includes('403')) {
+            addMessage('Maaf, API key tidak valid atau sudah expired. 😅', 'bot');
+        } else if (error.message.includes('404')) {
+            addMessage('Maaf, model AI tidak ditemukan. Sedang diperbaiki. 🔧', 'bot');
         } else {
-            addMessage('Maaf, terjadi kesalahan koneksi. Silakan refresh halaman dan coba lagi. 😊', 'bot');
+            addMessage(`Maaf, terjadi kesalahan: ${error.message}. Silakan coba lagi. 😊`, 'bot');
         }
     }
     

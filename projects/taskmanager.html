@@ -202,6 +202,64 @@
         </div>
     </footer>
 
+    <!-- Chatbot -->
+    <div class="chatbot-container" id="chatbot">
+        <button class="chatbot-toggle" id="chatbot-toggle">
+            <div class="robot-face">
+                <div class="robot-antenna">
+                    <div class="antenna-ball"></div>
+                </div>
+                <div class="robot-head">
+                    <div class="robot-eyes">
+                        <div class="robot-eye left-eye">
+                            <div class="eye-pupil"></div>
+                        </div>
+                        <div class="robot-eye right-eye">
+                            <div class="eye-pupil"></div>
+                        </div>
+                    </div>
+                    <div class="robot-mouth"></div>
+                </div>
+            </div>
+            <span class="chatbot-badge">1</span>
+        </button>
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-header-info">
+                    <div class="chatbot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h4>Portfolio Assistant</h4>
+                        <span class="chatbot-status">Online</span>
+                    </div>
+                </div>
+                <button class="chatbot-close" id="chatbot-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot">
+                    <div class="message-content">
+                        <p>Halo! 👋 Saya asisten virtual Alif. Ada yang bisa saya bantu tentang project ini?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-suggestions" id="chatbot-suggestions">
+                <button class="suggestion-btn" data-question="Ceritakan tentang project ini">Project ini</button>
+                <button class="suggestion-btn" data-question="Apa skill Alif?">Skills</button>
+                <button class="suggestion-btn" data-question="Bagaimana cara menghubungi Alif?">Contact</button>
+            </div>
+            <div class="chatbot-input-container">
+                <input type="text" class="chatbot-input" id="chatbot-input" placeholder="Ketik pesan...">
+                <button class="chatbot-send" id="chatbot-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/project-detail.js"></script>
+    <script src="../js/chatbot.js"></script>
 </body>
 </html>

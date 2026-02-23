@@ -318,22 +318,68 @@ async function sendMessage() {
         removeTyping();
         console.error('Chatbot Error:', error);
 
-        // Pesan error yang mudah dimengerti
-        if (error.message.includes('429')) {
-            addMessage('Waduh, lagi rame banget nih! 😅 Coba lagi dalam beberapa detik ya. 🙏', 'bot');
-        } else if (error.message.includes('403') || error.message.includes('401')) {
-            addMessage('Maaf, ada masalah koneksi ke server AI. Sedang diperbaiki ya! 🔧', 'bot');
-        } else if (error.message.includes('404')) {
-            addMessage('Ups, ada gangguan teknis. Coba lagi nanti ya! 🔧', 'bot');
-        } else {
-            addMessage('Maaf, lagi ada gangguan nih. Coba lagi dalam beberapa saat ya! 😊', 'bot');
-        }
+        // Gunakan fallback response jika API gagal
+        const fallback = getFallbackResponse(message);
+        addMessage(fallback, 'bot');
     }
 
     // Re-enable input
     chatbotInput.disabled = false;
     chatbotSend.disabled = false;
     chatbotInput.focus();
+}
+
+// Fallback responses saat API tidak tersedia
+function getFallbackResponse(message) {
+    const msg = message.toLowerCase();
+
+    // Salam & sapaan
+    if (msg.match(/^(halo|hai|hello|hi|hey|selamat|assalam|apa kabar)/)) {
+        return 'Halo! 👋 Selamat datang di portfolio Alif Siky Ridhofa! Saya Alif Bot, asisten virtual di sini. Ada yang bisa saya bantu? Kamu bisa tanya soal skill, project, atau layanan Alif! 😊';
+    }
+
+    // Siapa Alif
+    if (msg.match(/(siapa|tentang|about|profil|profile)/) && msg.match(/(alif|kamu|lo|lu|dia)/)) {
+        return 'Alif Siky Ridhofa adalah seorang Full Stack Developer & UI/UX Designer dengan pengalaman 3+ tahun. 🚀 Dia sudah menyelesaikan 50+ project dengan 20+ klien yang puas. Alif bisa bikin website, aplikasi HP, dan desain tampilan yang keren! 😎';
+    }
+
+    // Skills & keahlian
+    if (msg.match(/(skill|keahlian|bisa apa|kemampuan|teknologi|tech|bahasa pemrograman|programming)/)) {
+        return 'Alif punya banyak keahlian nih! 💪\n\n🌐 **Website**: React.js, Vue.js, HTML, CSS, JavaScript, Tailwind\n⚙️ **Backend**: Node.js, Python, PHP, Laravel\n📱 **Mobile**: React Native\n🎨 **Design**: Figma, Adobe XD\n🗄️ **Database**: MySQL, MongoDB, PostgreSQL\n\nLengkap kan? 😄';
+    }
+
+    // Project
+    if (msg.match(/(project|proyek|portfolio|karya|hasil kerja|apa aja|apa saja)/)) {
+        return 'Berikut beberapa project keren yang pernah Alif buat! 🎯\n\n🛒 **E-Commerce Platform** — Toko online lengkap\n📋 **Task Manager** — Aplikasi kelola tugas tim\n📊 **Finance Dashboard** — Dashboard data keuangan\n💪 **Health Tracker** — Aplikasi pantau kesehatan\n🍽️ **Restaurant Website** — Website restoran + reservasi\n📚 **Learning Management System** — Platform belajar online\n\nKamu bisa lihat detailnya di halaman project ya! 😊';
+    }
+
+    // Kontak
+    if (msg.match(/(kontak|contact|hubung|email|whatsapp|ig|instagram|github|linkedin)/)) {
+        return 'Kamu bisa hubungi Alif lewat: 📬\n\n📧 Email: alifsikyridhofa11@gmail.com\n🐙 GitHub: github.com/Asirakun\n💼 LinkedIn: linkedin.com/in/alif\n📸 Instagram: @alff_skyy\n\nAtau langsung isi form kontak di bawah halaman ini! 😊';
+    }
+
+    // Layanan & jasa
+    if (msg.match(/(layanan|jasa|service|bisa bantu|bikin|buat|order|pesan)/)) {
+        return 'Alif menyediakan beberapa layanan: 🛠️\n\n🌐 Bikin website modern & responsive\n📱 Bikin aplikasi HP (Android & iOS)\n🎨 Desain tampilan UI/UX\n💡 Konsultasi teknologi\n🔧 Maintenance & perbaikan\n\nKalau tertarik, langsung hubungi lewat form kontak atau email ya! 😊';
+    }
+
+    // Harga
+    if (msg.match(/(harga|biaya|cost|price|tarif|bayar|murah|mahal|berapa)/)) {
+        return 'Untuk harga tergantung dari jenis dan kompleksitas projectnya ya. 💰 Lebih baik langsung hubungi Alif lewat email (alifsikyridhofa11@gmail.com) atau isi form kontak di website ini supaya bisa diskusi lebih detail! 😊';
+    }
+
+    // Pengalaman
+    if (msg.match(/(pengalaman|experience|lama|tahun|berapa lama)/)) {
+        return 'Alif sudah punya pengalaman 3+ tahun di dunia development! 📅 Selama itu, dia sudah menyelesaikan 50+ project dengan 20+ klien dan tingkat kepuasan 99%. Keren kan? 🔥';
+    }
+
+    // Terima kasih
+    if (msg.match(/(terima kasih|makasih|thanks|thank you|thx)/)) {
+        return 'Sama-sama! 🙏😊 Senang bisa membantu. Kalau ada pertanyaan lain tentang portfolio Alif, jangan ragu untuk tanya ya!';
+    }
+
+    // Default response
+    return 'Terima kasih sudah bertanya! 😊 Saya bisa bantu kamu tentang:\n\n👤 **Profil Alif** — Siapa Alif Siky Ridhofa\n💻 **Skills** — Keahlian & teknologi\n🎯 **Project** — Portfolio & karya\n📬 **Kontak** — Cara menghubungi\n🛠️ **Layanan** — Jasa yang ditawarkan\n\nCoba tanya salah satu topik di atas ya!';
 }
 
 chatbotSend.addEventListener('click', sendMessage);

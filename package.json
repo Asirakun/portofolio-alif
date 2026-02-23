@@ -1,0 +1,9 @@
+{
+  "name": "portofolio-alif",
+  "version": "1.0.0",
+  "description": "Portfolio website Alif Siky Ridhofa",
+  "dependencies": {
+    "@netlify/functions": "^2.4.0",
+    "node-fetch": "^2.7.0"
+  }
+}
